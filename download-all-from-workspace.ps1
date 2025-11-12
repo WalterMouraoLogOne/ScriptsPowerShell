@@ -6,14 +6,14 @@ Download all downloadable .pbix files from a Power BI workspace.
 - Requires MicrosoftPowerBIMgmt PowerShell modules.
 - Authenticates interactively by default (Connect-PowerBIServiceAccount).
 - Usage examples:
-    .\Download-PowerBIWorkspacePBIX.ps1 -WorkspaceName "Sales Workspace" -OutDir "C:\PBIX"-OutDir "C:\PBIX"-
-    .\Download-PowerBIWorkspacePBIX.ps1 -WorkspaceId "00000000-0000-0000-0000-000000000000"
+    .\download-all-from-workspace.ps1 -WorkspaceName "Sales Workspace" -OutDir "C:\PBIX" -OutDir "C:\PBIX"
+    .\download-all-from-workspace.ps1 -WorkspaceId "00000000-0000-0000-0000-000000000000"
 #>
 
 param(
     [string]$WorkspaceName,
     [string]$WorkspaceId,
-    [Parameter(Mandatory)][string]$OutDir
+    [string]$OutDir
 )
 
 function Ensure-Module {
@@ -58,6 +58,8 @@ if ($WorkspaceId) {
 if (-not $workspace) { throw "Workspace not found." }
 
 Write-Host "Using workspace: $($workspace.Name) [$($workspace.Id)]"
+
+if (-not $OutDir) { throw "Faltou o parâmetro OutDir." }
 
 # Prepare output folder
 $OutDir = Resolve-Path -Path $OutDir -ErrorAction SilentlyContinue 2>$null
