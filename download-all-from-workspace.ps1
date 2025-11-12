@@ -13,7 +13,7 @@ Download all downloadable .pbix files from a Power BI workspace.
 param(
     [string]$WorkspaceName,
     [string]$WorkspaceId,
-    [string]$OutDir = ".\PowerBI-Exports"
+    [Parameter(Mandatory)][string]$OutDir
 )
 
 function Ensure-Module {
@@ -62,7 +62,6 @@ Write-Host "Using workspace: $($workspace.Name) [$($workspace.Id)]"
 # Prepare output folder
 $OutDir = Resolve-Path -Path $OutDir -ErrorAction SilentlyContinue 2>$null
 if (-not $OutDir) { New-Item -Path $PSBoundParameters['OutDir'] -ItemType Directory -Force | Out-Null; $OutDir = Resolve-Path -Path $PSBoundParameters['OutDir'] }
-$OutDir = $OutDir.Path
 
 # Get reports
 $reports = Get-PowerBIReport -WorkspaceId $workspace.Id -ErrorAction Stop
@@ -78,7 +77,7 @@ foreach ($r in $reports) {
     Write-Host "Exporting report: $($r.Name) -> $outFile"
     try {
         # Export-PowerBIReport is part of the Power BI management module set.
-        Export-PowerBIReport -Id $r.Id -WorkspaceId $workspace.Id -OutFile $outFile -Force -ErrorAction Stop
+        Export-PowerBIReport -Id $r.Id -WorkspaceId $workspace.Id -OutFile $outFile -ErrorAction Stop
         Write-Host "Saved: $outFile"
     } catch {
         Write-Warning "Failed to export '$($r.Name)'. It may not be downloadable or you lack permissions. Error: $($_.Exception.Message)"
