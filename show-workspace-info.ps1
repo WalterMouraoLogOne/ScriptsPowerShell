@@ -12,8 +12,17 @@ Show all downloadable .pbix files from a Power BI workspace.
 
 param(
     [string]$WorkspaceName,
-    [string]$WorkspaceId
+    [string]$WorkspaceId,
+    [string]$CSVFile
 )
+
+Function Write-CSV-Line {
+    param($Value)
+
+    if($CSVFile){
+        "$Value" | Out-File -FilePath $CSVFile -Append
+    }
+}
 
 function Ensure-Module {
     param($Name)
@@ -25,16 +34,21 @@ function Ensure-Module {
 }
 
 function Show-reports {
-    param($WorkspaceId)
+    param($WorkspaceId, $WorkspaceName)
     $reports = Get-PowerBIReport -WorkspaceId $WorkspaceId -ErrorAction Stop
     if (-not $reports) {
         Write-Host "No reports found in workspace."
         return
     }
     Write-Host "Reports in workspace:"
-    foreach ($r in $reports) {
-        Write-Host ("- {0} (ID: {1})" -f $r.Name, $r.Id)
+    $reports | ForEach-Object {
+        Write-CSV-Line -Value "`"$WorkspaceName`",`"$WorkspaceId`",`"$($_.Name)`",`"$($_.Id)`""
+        Write-Host ("- {0} (ID: {1})" -f $($_.Name), $($_.Id))
     }
+}
+
+if($CSVFile){
+    Remove-Item -Path $CSVFile
 }
 
 # Ensure modules
@@ -49,9 +63,10 @@ if (-not $WorkspaceName -and -not $WorkspaceId) {
     Write-Host "No workspace specified. Listing available workspaces..."
     $wsList = Get-PowerBIWorkspace -All
     if (-not $wsList) { throw "No workspaces available for the account." }
+    Write-CSV-Line -Value "`"WorkspaceName`",`"WorkspaceId`",`"ReportName`",`"ReportId`""
     $wsList | ForEach-Object { 
         Write-Host ("[{0}] {1}\n" -f $_.Id, $_.Name) 
-        Show-reports -WorkspaceId $_.Id
+        Show-reports -WorkspaceId $_.Id -WorkspaceName $_.Name
     }
 } else {
     if ($WorkspaceId) {
@@ -62,7 +77,8 @@ if (-not $WorkspaceName -and -not $WorkspaceId) {
 
     if (-not $workspace) { throw "Workspace not found." }
 
-    Show-reports -WorkspaceId $workspace.Id
+    Write-CSV-Line -Value "`"WorkspaceName`",`"WorkspaceId`",`"ReportName`",`"ReportId`""
+    Show-reports -WorkspaceId $workspace.Id -WorkspaceName $workspace.Name
 }
 
 Write-Host "Finished."
