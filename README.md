@@ -1,4 +1,4 @@
-Scripts para manipulação de .pibx
+Scripts Powershell para manipulação de .pibx
 
 Em todos os casos é solicitado o login interativamente.
 
