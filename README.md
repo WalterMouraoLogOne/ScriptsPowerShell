@@ -6,11 +6,6 @@ Download de todos os .pibx daquele workspace, no diretório indicado. Se não pa
 ----------------------------------
 .\download-all-from-account.ps1 -WorkspaceName -OutDir "C:\PBIX"
 
-Download de .pibx específico, para o diretório indicado.
-----------------------------------
-.\download-all-from-workspace.ps1 -WorkspaceName "Sales Workspace" -OutDir "C:\PBIX"
-
-.\download-all-from-workspace.ps1 -WorkspaceId "00000000-0000-0000-0000-000000000000" -OutDir "C:\PBIX"
 
 Lista todos os .pibx de um workspace. Se for passado o parâmetro -CSVFile, salva a listagem como .csv
 ----------------------------------
