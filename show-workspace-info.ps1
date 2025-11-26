@@ -48,7 +48,7 @@ function Show-reports {
 }
 
 if($CSVFile){
-    Remove-Item -Path $CSVFile
+    Remove-Item -Path $CSVFile -ErrorAction SilentlyContinue
 }
 
 # Ensure modules

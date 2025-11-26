@@ -6,7 +6,7 @@ Download all downloadable .pbix files from a Power BI account.
 - Requires MicrosoftPowerBIMgmt PowerShell modules.
 - Authenticates interactively by default (Connect-PowerBIServiceAccount).
 - Usage examples:
-    .\download-all-from-account.ps1 -WorkspaceName -OutDir "C:\PBIX"
+    .\download-all-from-account.ps1 -OutDir "C:\PBIX"
 #>
 
 param(
